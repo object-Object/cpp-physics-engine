@@ -41,6 +41,8 @@ int main() {
 
 	sf::Clock clock;
 	float frameTimeCarry = 0;
+	sf::Vector2i oldMousePos;
+	bool movingView = false;
 	while (window.isOpen()) {
 		// events
 		sf::Event event;
@@ -74,6 +76,27 @@ int main() {
 				} break;
 				default:
 					break;
+				}
+			} break;
+			case sf::Event::MouseButtonPressed: {
+				if (event.mouseButton.button == sf::Mouse::Middle) {
+					oldMousePos = sf::Mouse::getPosition();
+					movingView = true;
+				}
+			} break;
+			case sf::Event::MouseButtonReleased: {
+				if (event.mouseButton.button == sf::Mouse::Middle) {
+					movingView = false;
+				}
+			} break;
+			case sf::Event::MouseMoved: {
+				if (movingView) {
+					sf::Vector2i newMousePos = sf::Mouse::getPosition();
+					float x = (newMousePos.x - oldMousePos.x) * viewScale;
+					float y = (newMousePos.y - oldMousePos.y) * viewScale;
+					view.move(-x, y);
+					window.setView(view);
+					oldMousePos = newMousePos;
 				}
 			} break;
 			default:
